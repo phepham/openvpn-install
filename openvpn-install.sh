@@ -108,7 +108,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	# Detect some Debian minimal setups where neither wget nor curl are installed
 	if ! hash wget 2>/dev/null && ! hash curl 2>/dev/null; then
 		echo "Wget is required to use this installer."
-		read -n1 -r -p "Press any key to install Wget and continue..."
+		# read -n1 -r -p "Press any key to install Wget and continue..."
 		apt-get update
 		apt-get install -y wget
 	fi
@@ -122,7 +122,8 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		echo
 		echo "Which IPv4 address should be used?"
 		ip -4 addr | grep inet | grep -vE '127(\.[0-9]{1,3}){3}' | cut -d '/' -f 1 | grep -oE '[0-9]{1,3}(\.[0-9]{1,3}){3}' | nl -s ') '
-		read -p "IPv4 address [1]: " ip_number
+		# read -p "IPv4 address [1]: " ip_number
+  		ip_number=1
 		until [[ -z "$ip_number" || "$ip_number" =~ ^[0-9]+$ && "$ip_number" -le "$number_of_ip" ]]; do
 			echo "$ip_number: invalid selection."
 			read -p "IPv4 address [1]: " ip_number
@@ -154,7 +155,8 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		echo
 		echo "Which IPv6 address should be used?"
 		ip -6 addr | grep 'inet6 [23]' | cut -d '/' -f 1 | grep -oE '([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}' | nl -s ') '
-		read -p "IPv6 address [1]: " ip6_number
+		# read -p "IPv6 address [1]: " ip6_number
+  		ip6_number=1
 		until [[ -z "$ip6_number" || "$ip6_number" =~ ^[0-9]+$ && "$ip6_number" -le "$number_of_ip6" ]]; do
 			echo "$ip6_number: invalid selection."
 			read -p "IPv6 address [1]: " ip6_number
@@ -166,7 +168,8 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo "Which protocol should OpenVPN use?"
 	echo "   1) UDP (recommended)"
 	echo "   2) TCP"
-	read -p "Protocol [1]: " protocol
+	# read -p "Protocol [1]: " protocol
+ 	protocol=1
 	until [[ -z "$protocol" || "$protocol" =~ ^[12]$ ]]; do
 		echo "$protocol: invalid selection."
 		read -p "Protocol [1]: " protocol
@@ -181,7 +184,8 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	esac
 	echo
 	echo "What port should OpenVPN listen to?"
-	read -p "Port [1194]: " port
+	#read -p "Port [1194]: " port
+ 	port=1194
 	until [[ -z "$port" || "$port" =~ ^[0-9]+$ && "$port" -le 65535 ]]; do
 		echo "$port: invalid port."
 		read -p "Port [1194]: " port
@@ -195,14 +199,16 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo "   4) OpenDNS"
 	echo "   5) Quad9"
 	echo "   6) AdGuard"
-	read -p "DNS server [1]: " dns
+	# read -p "DNS server [1]: " dns
+ 	dns=1
 	until [[ -z "$dns" || "$dns" =~ ^[1-6]$ ]]; do
 		echo "$dns: invalid selection."
 		read -p "DNS server [1]: " dns
 	done
 	echo
 	echo "Enter a name for the first client:"
-	read -p "Name [client]: " unsanitized_client
+	#read -p "Name [client]: " unsanitized_client
+ 	unsanitized_client=$public_ip
 	# Allow a limited set of characters to avoid conflicts
 	client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
 	[[ -z "$client" ]] && client="client"
@@ -220,7 +226,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 			firewall="iptables"
 		fi
 	fi
-	read -n1 -r -p "Press any key to continue..."
+	#read -n1 -r -p "Press any key to continue..."
 	# If running inside a container, disable LimitNPROC to prevent conflicts
 	if systemd-detect-virt -cq; then
 		mkdir /etc/systemd/system/openvpn-server@server.service.d/ 2>/dev/null
